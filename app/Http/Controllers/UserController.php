@@ -36,4 +36,20 @@ class UserController extends Controller
         return response()->json($data, 206);
     }
 
+    public function delete(User $user) {
+
+        $data['messages ']= [];
+
+        if($user) {
+            $data['messages'][] = [
+                'message' => 'کاربر با آیدی ' . $user->id . ' با موفقیت حذف شد.',
+                'type' => 'success',
+                'timeout' => 5000
+            ];
+        }
+
+        if($user->delete() === true) {
+            return response()->json($data, 200);
+        }
+    }
 }
