@@ -36,19 +36,47 @@ class UserController extends Controller
         return response()->json($data, 206);
     }
 
-    public function delete(User $user) {
+    public function store(Request $request)
+    {
 
-        $data['messages ']= [];
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'last_name' => 'required',
+            'email' => 'email',
+            'password' => 'required|min:3',
+            'sex' => 'required',
+            'national_id' => 'nullable',
+            'mobile' => 'required'
+        ]);
 
-        if($user) {
-            $data['messages'][] = [
+        $validatedData['password'] = bcrypt($validatedData['password']);
+
+        User::create($validatedData);
+
+        $this->messages[] = [
+            'message' => 'کاربر جدید با موفقیت ایجاد شد.',
+            'type' => 'success',
+            'timeout' => 5000
+        ];
+        $data['messages'] = $this->messages;
+
+        return $data;
+    }
+
+    public function delete(User $user)
+    {
+
+        if ($user) {
+            $this->messages[] = [
                 'message' => 'کاربر با آیدی ' . $user->id . ' با موفقیت حذف شد.',
                 'type' => 'success',
                 'timeout' => 5000
             ];
         }
 
-        if($user->delete() === true) {
+        $data['messages'] = $this->messages;
+
+        if ($user->delete() === true) {
             return response()->json($data, 200);
         }
     }

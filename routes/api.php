@@ -19,5 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware(['cors'])->group(function () {
     Route::post('users/datatable', 'UserController@datatable');
+    Route::post('users/store', 'UserController@store');
     Route::delete('users/{user}', 'UserController@delete');
 });

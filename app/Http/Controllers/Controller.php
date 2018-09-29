@@ -11,21 +11,26 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    protected $messages = [];
+
     protected function buildDatatable($input, $resource) {
 
         $data = [];
         $rows = $resource;
 
+        // filtering
         foreach ($input['filtered'] as $filtered) {
             $rows = $rows->whereRaw("cast(" . $filtered['id'] . " as text) ILIKE '%" . $filtered['value'] . "%'");
         }
 
+        // sorting
         foreach ($input['sorted'] as $sorted) {
             $rows = $rows->orderBy($sorted['id'], $sorted['desc'] ? 'desc' : 'asc');
         }
+        $rows = $rows->orderBy('id', 'DESC');
 
+        // pagination
         $pages = (int)ceil($rows->count() / $input['pageSize']);
-
         $skipPages = $input['page'];
         if ($input['page'] >= $pages) {
             $skipPages = $pages - 1;
