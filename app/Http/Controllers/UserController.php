@@ -36,9 +36,13 @@ class UserController extends Controller
         return response()->json($data, 206);
     }
 
+    public function edit(User $user)
+    {
+        return $user->toArray();
+    }
+
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'name' => 'required',
             'last_name' => 'required',
@@ -63,9 +67,38 @@ class UserController extends Controller
         return $data;
     }
 
+    public function update(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'last_name' => 'required',
+            'email' => 'email',
+            'password' => 'nullable',
+            'sex' => 'required',
+            'national_id' => 'nullable',
+            'mobile' => 'required'
+        ]);
+
+        if(array_key_exists('password', $validatedData) && trim($validatedData['password']) == '') {
+            unset($validatedData['password']);
+        }
+
+//        return $validatedData;
+
+        $user->update($validatedData);
+
+        $this->messages[] = [
+            'message' => 'کاربر با موفقیت ویرایش شد.',
+            'type' => 'success',
+            'timeout' => 5000
+        ];
+        $data['messages'] = $this->messages;
+
+        return $data;
+    }
+
     public function delete(User $user)
     {
-
         if ($user) {
             $this->messages[] = [
                 'message' => 'کاربر با آیدی ' . $user->id . ' با موفقیت حذف شد.',
