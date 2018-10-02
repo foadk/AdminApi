@@ -10,13 +10,13 @@ class UserController extends Controller
     private $headers = [
 
         'main' => [
-            'id' => 'شناسه',
-            'name' => 'نام',
-            'last_name' => 'نام خانوادگی',
-            'sex' => 'جنسیت',
-            'mobile' => 'تلفن',
-            'national_id' => 'کد ملی',
-            'email' => 'ایمیل',
+            'users.id' => 'شناسه',
+            'users.name' => 'نام',
+            'users.last_name' => 'نام خانوادگی',
+            'users.sex' => 'جنسیت',
+            'users.mobile' => 'تلفن',
+            'users.national_id' => 'کد ملی',
+            'users.email' => 'ایمیل',
         ],
 
         'actions' => [
@@ -29,7 +29,14 @@ class UserController extends Controller
 
     public function datatable(Request $request)
     {
-        $data = $this->buildDatatable($request->all(), new User());
+        $data = $this->buildDatatable(
+            $request->all(),
+            new User(),
+            'users',
+            null,
+            array_map(function ($item) {return $item . ' as ' . $item;}, array_keys($this->headers['main']))
+//            array_keys($this->headers['main'])
+        );
 
         $data['headers'] = $this->headers;
 

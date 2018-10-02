@@ -10,11 +10,12 @@ class NewsController extends Controller
     private $headers = [
 
         'main' => [
-            'id' => 'شناسه',
-            'title' => 'عنوان',
-            'description' => 'توضیحات',
-            'position' => 'موقعیت',
-            'display' => 'نمایش',
+            'news.id' => 'شناسه',
+            'news.title' => 'عنوان',
+            'news.description' => 'توضیحات',
+            'news.position' => 'موقعیت',
+            'news.display' => 'نمایش',
+            'news_cats.title' => 'گروه',
         ],
 
         'actions' => [
@@ -27,7 +28,22 @@ class NewsController extends Controller
 
     public function datatable(Request $request)
     {
-        $data = $this->buildDatatable($request->all(), new News());
+        $data = $this->buildDatatable(
+            $request->all(),
+            new News(),
+            'news',
+            [
+                [
+                    'joinType' => 'OneToMany',
+                    'table' => 'news_cats',
+                    'foreignKey' => 'news_cat_id',
+                ]
+            ],
+            array_map(
+                function ($item) {return $item . ' as ' . $item;},
+                array_keys($this->headers['main'])
+            )
+        );
 
         $data['headers'] = $this->headers;
 
