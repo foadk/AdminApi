@@ -36,11 +36,6 @@ class UserController extends Controller
         return response()->json($data, 206);
     }
 
-    public function edit(User $user)
-    {
-        return $user->toArray();
-    }
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -65,6 +60,11 @@ class UserController extends Controller
         $data['messages'] = $this->messages;
 
         return $data;
+    }
+
+    public function edit(User $user)
+    {
+        return $user->toArray();
     }
 
     public function update(Request $request, User $user)

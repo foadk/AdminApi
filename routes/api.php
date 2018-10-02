@@ -18,9 +18,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['cors'])->group(function () {
+    
     Route::post('users/datatable', 'UserController@datatable');
     Route::post('users', 'UserController@store');
     Route::get('users/{user}/edit', 'UserController@edit');
     Route::put('users/{user}', 'UserController@update');
     Route::delete('users/{user}', 'UserController@delete');
+
+    Route::post('news/datatable', 'NewsController@datatable');
+//    Route::post('news', 'NewsController@store');
+//    Route::get('news/{news}/edit', 'NewsController@edit');
+//    Route::put('news/{news}', 'NewsController@update');
+    Route::delete('news/{news}', 'NewsController@delete');
 });
