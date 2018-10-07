@@ -20,7 +20,7 @@ class CreateNewsTable extends Migration
             $table->string('description')->nullable();
             $table->text('content')->nullable();
             $table->integer('position')->nullable();
-            $table->boolean('display')->nullable();
+            $table->boolean('display')->default(true);
             $table->timestamps();
 
             $table->foreign('news_cat_id')->references('id')->on('news_cats')->onDelete('cascade');

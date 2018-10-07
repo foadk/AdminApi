@@ -19,7 +19,7 @@ class NewsTableSeeder extends Seeder
 
         $catIds = \App\NewsCat::pluck('id');
 
-        for ($i = 1; $i < 100; $i++) {
+        for ($i = 1; $i <= 50; $i++) {
             $news[] = [
                 'news_cat_id' => $catIds[rand(0, $catIds->count() - 1)],
                 'title' => $faker->catchPhrase,

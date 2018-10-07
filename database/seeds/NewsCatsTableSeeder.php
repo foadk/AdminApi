@@ -11,24 +11,14 @@ class NewsCatsTableSeeder extends Seeder
      */
     public function run()
     {
-        $topCats = [
-            ['title' => 'عمومی'],
-            ['title' => 'اختصاصی']
-        ];
-
-        \App\NewsCat::insert($topCats);
-
-        $generalId = \App\NewsCat::where('title', 'عمومی')->first()->id;
-        $specialisedId = \App\NewsCat::where('title', 'اختصاصی')->first()->id;
-
         $cats = [
-            ['title' => 'ورزشی', 'news_cat_id' => $generalId],
-            ['title' => 'اقتصادی', 'news_cat_id' => $specialisedId],
-            ['title' => 'سیاسی', 'news_cat_id' => $specialisedId]
+            ['title' => 'عمومی'],
+            ['title' => 'اختصاصی'],
+            ['title' => 'ورزشی'],
+            ['title' => 'اقتصادی'],
+            ['title' => 'سیاسی']
         ];
 
         \App\NewsCat::insert($cats);
-
-
     }
 }

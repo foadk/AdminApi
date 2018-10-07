@@ -15,11 +15,8 @@ class CreateNewsCatsTable extends Migration
     {
         Schema::create('news_cats', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('news_cat_id')->nullable();
             $table->string('title');
             $table->timestamps();
-
-            $table->foreign('news_cat_id')->references('id')->on('news_cats')->onDelete('cascade');
         });
     }
 
