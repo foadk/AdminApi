@@ -28,7 +28,7 @@ Route::middleware(['cors'])->group(function () {
     Route::post('news/datatable', 'NewsController@datatable');
     Route::get('news/create', 'NewsController@create');
     Route::post('news', 'NewsController@store');
-//    Route::get('news/{news}/edit', 'NewsController@edit');
-//    Route::put('news/{news}', 'NewsController@update');
+    Route::get('news/{news}/edit', 'NewsController@edit');
+    Route::put('news/{news}', 'NewsController@update');
     Route::delete('news/{news}', 'NewsController@delete');
 });

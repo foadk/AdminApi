@@ -74,9 +74,45 @@ class NewsController extends Controller
         $newsCat = NewsCat::find($request->all()['news_cat_id']);
 
         $newsCat->news()->create($validatedData);
-        
+
         $this->messages[] = [
             'message' => 'خبر جدید با موفقیت ایجاد شد.',
+            'type' => 'success',
+            'timeout' => 5000
+        ];
+        $data['messages'] = $this->messages;
+
+        return $data;
+    }
+
+    public function edit(News $news)
+    {
+        $allNewsCat = NewsCat::select(['id', 'title'])->get()->toArray();
+        $data['cats'] = $allNewsCat;
+        $data['fields'] = $news->toArray();
+
+        return $data;
+    }
+
+    public function update(Request $request, News $news)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'news_cat_id' => 'required',
+            'description' => 'nullable',
+            'content' => 'nullable',
+            'position' => 'nullable',
+            'display' => 'nullable',
+        ]);
+
+//        return $validatedData;
+
+        $newsCat = NewsCat::find($request->all()['news_cat_id']);
+        $news->newsCat()->associate($newsCat);
+        $news->update($validatedData);
+
+        $this->messages[] = [
+            'message' => 'خبر با موفقیت ویرایش شد.',
             'type' => 'success',
             'timeout' => 5000
         ];
