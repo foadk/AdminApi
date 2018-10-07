@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\News;
+use App\NewsCat;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
@@ -48,6 +49,40 @@ class NewsController extends Controller
         $data['headers'] = $this->headers;
 
         return response()->json($data, 206);
+    }
+
+    public function create()
+    {
+        $allNewsCat = NewsCat::select(['id', 'title'])->get()->toArray();
+
+        $data['cats'] = $allNewsCat;
+
+        return $data;
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'news_cat_id' => 'required',
+            'description' => 'nullable',
+            'content' => 'nullable',
+            'position' => 'nullable',
+            'display' => 'nullable',
+        ]);
+
+        $newsCat = NewsCat::find($request->all()['news_cat_id']);
+
+        $newsCat->news()->create($validatedData);
+        
+        $this->messages[] = [
+            'message' => 'خبر جدید با موفقیت ایجاد شد.',
+            'type' => 'success',
+            'timeout' => 5000
+        ];
+        $data['messages'] = $this->messages;
+
+        return $data;
     }
 
     public function delete(News $news)
