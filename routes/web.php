@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Route::group(['middleware' => 'cors'], function(){
+//    Passport::routes();
+//});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
