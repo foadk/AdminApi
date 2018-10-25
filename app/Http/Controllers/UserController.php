@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 
-class UserController extends Controller
+class UserController extends AdminController
 {
     private $headers = [
 
@@ -27,18 +27,20 @@ class UserController extends Controller
 
     ];
 
+    private $tableName = 'users';
+
     public function datatable(Request $request)
     {
-        $data = $this->buildDatatable(
+        $data = $this->Datatable->buildDatatable(
             $request->all(),
             new User(),
-            'users',
+            $this->tableName,
             null,
-            array_map(function ($item) {return $item . ' as ' . $item;}, array_keys($this->headers['main']))
-//            array_keys($this->headers['main'])
+            $this->headers['main']
         );
 
         $data['headers'] = $this->headers;
+        $data['table'] = $this->tableName;
 
         return response()->json($data, 206);
     }

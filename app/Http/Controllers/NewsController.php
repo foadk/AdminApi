@@ -6,7 +6,7 @@ use App\News;
 use App\NewsCat;
 use Illuminate\Http\Request;
 
-class NewsController extends Controller
+class NewsController extends AdminController
 {
     private $headers = [
 
@@ -27,12 +27,14 @@ class NewsController extends Controller
 
     ];
 
+    private $tableName = 'news';
+
     public function datatable(Request $request)
     {
-        $data = $this->buildDatatable(
+        $data = $this->Datatable->buildDatatable(
             $request->all(),
             new News(),
-            'news',
+            $this->tableName,
             [
                 [
                     'joinType' => 'OneToMany',
@@ -40,13 +42,11 @@ class NewsController extends Controller
                     'foreignKey' => 'news_cat_id',
                 ]
             ],
-            array_map(
-                function ($item) {return $item . ' as ' . $item;},
-                array_keys($this->headers['main'])
-            )
+            $this->headers['main']
         );
 
         $data['headers'] = $this->headers;
+        $data['table'] = $this->tableName;
 
         return response()->json($data, 206);
     }
