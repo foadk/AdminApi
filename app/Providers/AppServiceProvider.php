@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             'App\Contracts\DatatableInterface',
-            'App\Services\Datatable\MainDatatable'
+            'App\Services\Datatable\MySQLDatatable'
         );
     }
 }
