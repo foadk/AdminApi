@@ -18,6 +18,7 @@ class CreatePermissionsTable extends Migration
             $table->unsignedInteger('permission_group_id')->nullable();
             $table->string('title')->unique();
             $table->integer('position')->default(1000);
+            $table->boolean('display')->default(true);
             $table->timestamps();
 
             $table->foreign('permission_group_id')

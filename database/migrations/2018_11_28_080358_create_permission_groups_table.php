@@ -17,6 +17,7 @@ class CreatePermissionGroupsTable extends Migration
             $table->increments('id');
             $table->string('title')->unique();
             $table->integer('position')->default(1000);
+            $table->boolean('display')->default(true);
             $table->timestamps();
         });
     }
