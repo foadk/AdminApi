@@ -127,6 +127,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'permission_group_ids' => [
+            'required' => 'حداقل یک دسترسی را انتخاب نمایید.'
+        ]
     ],
 
     /*
