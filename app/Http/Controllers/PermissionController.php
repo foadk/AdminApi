@@ -128,9 +128,7 @@ class PermissionController extends AdminController
         $routes = array_filter($routes, function ($item) use($allPermissions) {
             return ('admin' === explode('.', $item['title'])[0]) && (!in_array($item['title'], $allPermissions));
         });
-        return $routes;
         Permission::insert($routes);
-        // $undefinedPermissionGroup->permissions()->insert($routes);
     }
 
     private function validateData($request)
