@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Permission;
 use App\PermissionGroup;
+use Illuminate\Support\Facades\Route;
 
 class PermissionController extends AdminController
 {
@@ -115,7 +116,25 @@ class PermissionController extends AdminController
         }
     }
 
-    private function validateData($request) {
+    public function sync()
+    {
+        $routes = array();
+        $undefinedPermissionGroup = PermissionGroup::firstOrCreate(['title' => 'undefined']);
+        $allPermissions = Permission::pluck('title')->toArray();
+        $routeCollection = Route::getRoutes();
+        foreach ($routeCollection as $route) {
+            $routes[] = ['title' => $route->getName(), 'permission_group_id' => $undefinedPermissionGroup->id];
+        }
+        $routes = array_filter($routes, function ($item) use($allPermissions) {
+            return ('admin' === explode('.', $item['title'])[0]) && (!in_array($item['title'], $allPermissions));
+        });
+        return $routes;
+        Permission::insert($routes);
+        // $undefinedPermissionGroup->permissions()->insert($routes);
+    }
+
+    private function validateData($request)
+    {
         return $request->validate([
             'title' => 'required',
             'permission_group_title' => 'required',
