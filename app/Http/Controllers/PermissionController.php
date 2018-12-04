@@ -41,6 +41,7 @@ class PermissionController extends AdminController
                     'foreignKey' => 'permission_group_id',
                 ]
             ],
+            null,
             $this->headers['main']
         );
 

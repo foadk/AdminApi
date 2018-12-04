@@ -37,6 +37,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('permissions/{permission}/edit', 'PermissionController@edit')->name('admin.permissions.edit');
     Route::put('permissions/{permission}', 'PermissionController@update')->name('admin.permissions.update');
     Route::delete('permissions/{permission}', 'PermissionController@delete')->name('admin.permissions.delete');
+    Route::get('permissions/sync', 'PermissionController@sync')->name('admin.permissions.sync');
 
     Route::post('roles/datatable', 'RoleController@datatable')->name('admin.roles.datatable');
     Route::get('roles/create', 'RoleController@create')->name('admin.roles.create');
@@ -44,4 +45,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('roles/{role}/edit', 'RoleController@edit')->name('admin.roles.edit');
     Route::put('roles/{role}', 'RoleController@update')->name('admin.roles.update');
     Route::delete('roles/{role}', 'RoleController@delete')->name('admin.roles.delete');
+
+    Route::post('admins/datatable', 'AdminsController@datatable')->name('admin.admins.datatable');
+    Route::get('admins/create', 'AdminsController@create')->name('admin.admins.create');
+    Route::post('admins', 'AdminsController@store')->name('admin.admins.store');
+    Route::get('admins/{user}/edit', 'AdminsController@edit')->name('admin.admins.edit');
+    Route::put('admins/{user}', 'AdminsController@update')->name('admin.admins.update');
+    Route::delete('admins/{user}', 'AdminsController@delete')->name('admin.admins.delete');
 });

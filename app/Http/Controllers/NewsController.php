@@ -42,6 +42,7 @@ class NewsController extends AdminController
                     'foreignKey' => 'news_cat_id',
                 ]
             ],
+            null,
             $this->headers['main']
         );
 

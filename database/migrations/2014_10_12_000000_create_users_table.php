@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->enum('sex', ['male', 'female'])->nullable();
             $table->string('national_id')->nullable();
             $table->string('mobile')->nullable();
+            $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

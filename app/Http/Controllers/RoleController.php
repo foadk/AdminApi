@@ -33,6 +33,7 @@ class RoleController extends AdminController
             new Role(),
             $this->tableName,
             null,
+            null,
             $this->headers['main']
         );
 

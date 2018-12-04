@@ -11,6 +11,7 @@ class MainDatatable implements DatatableInterface
     protected $resource;
     protected $tableName;
     protected $joins;
+    protected $wheres;
     protected $selects;
 
     // Result fields
@@ -37,6 +38,11 @@ class MainDatatable implements DatatableInterface
         $this->joins = $joins;
     }
 
+    protected function setWheres($wheres)
+    {
+        $this->wheres = $wheres;
+    }
+
     protected function setSelects($selects)
     {
         $this->selects = array_map(
@@ -47,13 +53,16 @@ class MainDatatable implements DatatableInterface
         );
     }
 
-    public function buildDatatable($input, $resource, $tableName, $joins, $selects)
+    public function buildDatatable($input, $resource, $tableName, $joins, 
+    $wheres, 
+    $selects)
     {
         $this->setInput($input);
         $this->setResource($resource);
         $this->setTableName($tableName);
         $this->setJoins($joins);
         $this->setSelects($selects);
+        $this->setWheres($wheres);
         $this->build();
         return $this->returnResults();
     }
@@ -74,6 +83,7 @@ class MainDatatable implements DatatableInterface
 
         $rows = $this->joinTables($rows);
         $rows = $this->filter($rows);
+        $rows = $this->where($rows);
         $rows = $this->sort($rows);
         $rows = $this->paginate($rows);
         $rows = $this->select($rows);
@@ -100,6 +110,16 @@ class MainDatatable implements DatatableInterface
     {
         foreach ($this->input['filtered'] as $filtered) {
             $rows = $rows->whereRaw("cast(" . $filtered['id'] . " as text) ILIKE '%" . $filtered['value'] . "%'");
+        }
+        return $rows;
+    }
+
+    protected function where($rows)
+    {
+        if ($this->wheres && count($this->wheres)) {
+            foreach ($this->wheres as $where) {
+                $rows = $rows->where($where[0], $where[1], $where[2]);
+            }
         }
         return $rows;
     }

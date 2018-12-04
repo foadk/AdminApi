@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Role;
+use Illuminate\Support\Facades\Hash;
 
-class UserController extends AdminController
+class AdminsController extends AdminController
 {
     private $headers = [
 
@@ -13,9 +15,6 @@ class UserController extends AdminController
             'users.id' => 'شناسه',
             'users.name' => 'نام',
             'users.last_name' => 'نام خانوادگی',
-            'users.sex' => 'جنسیت',
-            'users.mobile' => 'تلفن',
-            'users.national_id' => 'کد ملی',
             'users.email' => 'ایمیل',
         ],
 
@@ -36,7 +35,7 @@ class UserController extends AdminController
             new User(),
             $this->tableName,
             null,
-            [['users.is_admin', '=', false]],
+            [['users.is_admin', '=', true]],
             $this->headers['main']
         );
 
@@ -46,24 +45,27 @@ class UserController extends AdminController
         return response()->json($data, 206);
     }
 
+    public function create()
+    {
+        $data['roles'] = Role::select(['id', 'title'])->get()->toArray();
+
+        return $data;
+    }
+
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'last_name' => 'required',
-            'email' => 'email',
-            'password' => 'required|min:3',
-            'sex' => 'required',
-            'national_id' => 'nullable',
-            'mobile' => 'required'
-        ]);
+        $validatedData = $this->validateData($request);
 
-        $validatedData['password'] = bcrypt($validatedData['password']);
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
-        User::create($validatedData);
+        $validatedData['is_admin'] = true;
+
+        $admin = User::create($validatedData);
+
+        $admin->roles()->sync($validatedData['role_ids']);
 
         $this->messages[] = [
-            'message' => 'کاربر جدید با موفقیت ایجاد شد.',
+            'message' => 'مدیر جدید با موفقیت ایجاد شد.',
             'type' => 'success',
             'timeout' => 5000
         ];
@@ -74,31 +76,29 @@ class UserController extends AdminController
 
     public function edit(User $user)
     {
-        return $user->toArray();
+        $data['roles'] = Role::select(['id', 'title'])->get()->toArray();
+
+        $data['fields'] = $user->toArray();
+
+        $data['fields']['role_ids'] = $user->roles->pluck('id')->toArray();;
+
+        return $data;
     }
 
     public function update(Request $request, User $user)
     {
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'last_name' => 'required',
-            'email' => 'email',
-            'password' => 'nullable',
-            'sex' => 'required',
-            'national_id' => 'nullable',
-            'mobile' => 'required'
-        ]);
+        $validatedData = $this->validateData($request, ['password' => 'nullable|min:3']);
 
-        if(array_key_exists('password', $validatedData) && trim($validatedData['password']) == '') {
+        if (array_key_exists('password', $validatedData) && trim($validatedData['password']) == '') {
             unset($validatedData['password']);
         }
 
-//        return $validatedData;
-
         $user->update($validatedData);
 
+        $user->roles()->sync($validatedData['role_ids']);
+
         $this->messages[] = [
-            'message' => 'کاربر با موفقیت ویرایش شد.',
+            'message' => 'مدیر با موفقیت ویرایش شد.',
             'type' => 'success',
             'timeout' => 5000
         ];
@@ -111,7 +111,7 @@ class UserController extends AdminController
     {
         if ($user) {
             $this->messages[] = [
-                'message' => 'کاربر با آیدی ' . $user->id . ' با موفقیت حذف شد.',
+                'message' => 'مدیر با آیدی ' . $user->id . ' با موفقیت حذف شد.',
                 'type' => 'success',
                 'timeout' => 5000
             ];
@@ -122,5 +122,20 @@ class UserController extends AdminController
         if ($user->delete() === true) {
             return response()->json($data, 200);
         }
+    }
+
+    private function validateData($request, $additionalRules = null)
+    {
+        $validationRules = [
+            'name' => 'required',
+            'last_name' => 'required',
+            'email' => 'email',
+            'password' => 'required|min:3',
+            'role_ids' => 'required'
+        ];
+
+        if ($additionalRules) $validationRules = array_merge($validationRules, $additionalRules);
+
+        return $request->validate($validationRules);
     }
 }

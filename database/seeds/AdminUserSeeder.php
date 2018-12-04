@@ -17,7 +17,8 @@ class AdminUserSeeder extends Seeder
             'name' => 'فواد',
             'last_name' => 'خالقی',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('123')
+            'password' => Hash::make('123'),
+            'is_admin' => true
         ]);
     }
 }
