@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
+use App\User;
+use App\Services\Authorization\PermissionList;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -27,8 +29,17 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('has-access', function ($user, $permission) {
+
+            $permissionList = new PermissionList($user);
+
+            $permissions = $permissionList->getPermissionList();
+            
+            return in_array($permission, $permissions);
+        });
+
         //
-        Route::group(['middleware' => 'cors'], function(){
+        Route::group(['middleware' => 'cors'], function () {
             Passport::routes();
         });
 

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Permission;
 use App\PermissionGroup;
 use Illuminate\Support\Facades\Route;
+use App\Services\Authorization\PermissionList;
+use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends AdminController
 {
@@ -117,18 +119,31 @@ class PermissionController extends AdminController
         }
     }
 
+    public function getPermissions()
+    {
+        $permissionList = new PermissionList(Auth::user());
+
+        $data['permissions'] = $permissionList->getPermissionList();
+
+        return $data;
+    }
+
     public function sync()
     {
         $routes = array();
-        $undefinedPermissionGroup = PermissionGroup::firstOrCreate(['title' => 'undefined']);
         $allPermissions = Permission::pluck('title')->toArray();
         $routeCollection = Route::getRoutes();
         foreach ($routeCollection as $route) {
-            $routes[] = ['title' => $route->getName(), 'permission_group_id' => $undefinedPermissionGroup->id];
+            $routes[] = ['title' => $route->getName()];
         }
-        $routes = array_filter($routes, function ($item) use($allPermissions) {
+        $routes = array_filter($routes, function ($item) use ($allPermissions) {
             return ('admin' === explode('.', $item['title'])[0]) && (!in_array($item['title'], $allPermissions));
         });
+        foreach ($routes as &$route) {
+            $groupName = explode('.', $route['title'])[1];
+            $permissionGroup = PermissionGroup::firstOrCreate(['title' => $groupName]);
+            $route['permission_group_id'] = $permissionGroup->id;
+        }
         Permission::insert($routes);
     }
 

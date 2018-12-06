@@ -45,9 +45,10 @@ class RoleController extends AdminController
 
     public function create()
     {
-        $permissionGroups = PermissionGroup::select(['id', 'title'])->get()->toArray();
-
-        $data['permissionGroups'] = $permissionGroups;
+        $data['permissionGroups'] = PermissionGroup::select(['permission_groups.id', 'permission_groups.title'])
+            ->join('permissions', 'permission_groups.id', '=', 'permissions.permission_group_id')
+            ->groupBy('permission_groups.id')
+            ->get()->toArray();
 
         return $data;
     }
@@ -72,7 +73,10 @@ class RoleController extends AdminController
 
     public function edit(Role $role)
     {
-        $data['permissionGroups'] = PermissionGroup::select(['id', 'title'])->get()->toArray();
+        $data['permissionGroups'] = PermissionGroup::select(['permission_groups.id', 'permission_groups.title'])
+            ->join('permissions', 'permission_groups.id', '=', 'permissions.permission_group_id')
+            ->groupBy('permission_groups.id')
+            ->get()->toArray();
 
         $data['fields'] = $role->toArray();
 
